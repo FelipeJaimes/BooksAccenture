@@ -44,6 +44,7 @@ public class ListActivity extends AppCompatActivity {
     TextView mEmptyStateTextView;
     private List<Book> books = new ArrayList<>();
     private BookAdapter mBookAdapter;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class ListActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
@@ -81,9 +82,13 @@ public class ListActivity extends AppCompatActivity {
                     mEmptyStateTextView.setText("No internet connection");
                 }
 
-                if (books == null) {
+                if (response.body().getBooks() == null) {
+                    recyclerView.setVisibility(View.GONE);
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
                     Log.d("ERROR: ", "empty array");
                 } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    mEmptyStateTextView.setVisibility(View.GONE);
                     books.addAll(response.body().getBooks());
                     mBookAdapter.notifyDataSetChanged();
                 }
