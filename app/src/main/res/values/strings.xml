@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BooksAccenture</string>
+    <string name="book_list_no_books_text">No books found</string>
 </resources>
