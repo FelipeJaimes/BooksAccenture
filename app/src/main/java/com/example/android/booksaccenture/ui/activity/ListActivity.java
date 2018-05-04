@@ -11,8 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +20,6 @@ import com.example.android.booksaccenture.model.Book;
 import com.example.android.booksaccenture.rest.api.BookAPI;
 import com.example.android.booksaccenture.rest.response.BookResponse;
 import com.example.android.booksaccenture.ui.adapter.BookAdapter;
-import com.example.android.booksaccenture.ui.adapter.BookAdapterLW;
 import com.example.android.booksaccenture.ui.listener.ItemClickListener;
 
 import java.util.ArrayList;
