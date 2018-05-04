@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,11 +21,15 @@ import com.example.android.booksaccenture.R;
 import com.example.android.booksaccenture.model.Book;
 import com.example.android.booksaccenture.rest.api.BookAPI;
 import com.example.android.booksaccenture.rest.response.BookResponse;
+import com.example.android.booksaccenture.ui.adapter.BookAdapter;
 import com.example.android.booksaccenture.ui.adapter.BookAdapterLW;
+import com.example.android.booksaccenture.ui.listener.ItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,40 +38,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ListActivity extends AppCompatActivity {
 
-    private ProgressBar mProgressBar;
-    private TextView mEmptyStateTextView;
-    private List<Book> books;
-
-    //    LISTVIEW++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    private BookAdapterLW mBookAdapterLW;
-//    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.empty_view)
+    TextView mEmptyStateTextView;
+    private List<Book> books = new ArrayList<>();
+    private BookAdapter mBookAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_list);
+        ButterKnife.bind(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        LISTVIEW++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        ListView bookListView = (ListView) findViewById(R.id.list);
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        bookListView.setEmptyView(mEmptyStateTextView);
-
-        mBookAdapterLW = new BookAdapterLW(this, new ArrayList<Book>());
-        bookListView.setAdapter(mBookAdapterLW);
-//        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-//        RECYCLERVIEW------------------------------------------------------------------------------
-//        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        recyclerView.setLayoutManager(mLayoutManager);
-//
-//        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view); //TODO
-//        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-//        ------------------------------------------------------------------------------------------
-
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
 
         //RETROFIT++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         Intent intent = getIntent();
@@ -91,14 +81,11 @@ public class ListActivity extends AppCompatActivity {
                     mEmptyStateTextView.setText("No internet connection");
                 }
 
-                mBookAdapterLW.clear();
-
-                books = response.body().getBooks();
-
                 if (books == null) {
                     Log.d("ERROR: ", "empty array");
                 } else {
-                    mBookAdapterLW.addAll(books);
+                    books.addAll(response.body().getBooks());
+                    mBookAdapter.notifyDataSetChanged();
                 }
 
             }
@@ -111,39 +98,26 @@ public class ListActivity extends AppCompatActivity {
         });
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//LISTVIEW++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mBookAdapter = new BookAdapter(books);
+        mBookAdapter.setOnItemClickListener(new ItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Book currentBook = mBookAdapterLW.getItem(position);
+            public void onItemClick(View view, int adapterPos, Book item) {
+                //TODO
                 Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
-                intent.putExtra("currentBook", currentBook);
+                intent.putExtra("currentBook", item);
                 startActivity(intent);
-
             }
         });
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-//RECYCLERVIEW--------------------------------------------------------------------------------------
-//        BookAdapter adapter = new BookAdapter(books);
-//        adapter.setOnItemClickListener(new ItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int adapterPos, Book item) {
-//
-//            }
-//        });
-//        recyclerView.setAdapter(adapter);
-//--------------------------------------------------------------------------------------------------
+        recyclerView.setAdapter(mBookAdapter);
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
+    //TODO: add to utils
     public boolean checkInternetConnection() {
         boolean connected = false;
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

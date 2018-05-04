@@ -23,14 +23,10 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content" />-->
 
-    <ListView
-        android:id="@+id/list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:orientation="vertical"
-        tools:listitem="Placeholder" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/empty_view"

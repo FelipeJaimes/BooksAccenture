@@ -63,7 +63,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    mItemClickListener.onItemClick(view, viewHolder.getAdapterPosition(), mBooks.get(viewHolder.getAdapterPosition()));
+                 mItemClickListener.onItemClick(view, viewHolder.getAdapterPosition(), mBooks.get(viewHolder.getAdapterPosition()));
                 }
             });
     }

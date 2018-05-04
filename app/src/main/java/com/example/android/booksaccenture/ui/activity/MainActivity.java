@@ -2,33 +2,32 @@ package com.example.android.booksaccenture.ui.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View.OnTouchListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.ListPopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.booksaccenture.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener, AdapterView.OnItemClickListener {
+import butterknife.ButterKnife;
+import butterknife.OnTouch;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 
     private Button mButton;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public static final String PREFS_SEARCH_HISTORY = "SearchHistory";
     private SharedPreferences settings;
     private List<String> history;
-    private ArrayAdapter adapter;
     private EditText textView;
 
     private ListPopupWindow lpw;
@@ -46,34 +44,34 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         textView = findViewById(R.id.textInput);
         mButton = findViewById(R.id.button_search);
 
         settings = getSharedPreferences(PREFS_NAME, 0);
         history = new ArrayList<>(settings.getStringSet(PREFS_SEARCH_HISTORY, new HashSet<String>()));
 
-
-        textView.setOnTouchListener(this);
         lpw = new ListPopupWindow(this);
         lpw.setAdapter(new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, history));
         lpw.setAnchorView(textView);
-        lpw.setModal(true);
         lpw.setOnItemClickListener(this);
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String searchString = textView.getText().toString();
-                if (searchString.matches("")) {
-                    Toast.makeText(MainActivity.this, "You did not enter a search value", Toast.LENGTH_SHORT).show();
-                } else {
-                    addSearchInput(textView.getText().toString());
-                    Intent intent = new Intent(MainActivity.this, ListActivity.class);
-                    intent.putExtra("SEARCH_TERM", searchString);
-                    startActivity(intent);
-                }
+                search();
+            }
+        });
 
+        textView.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    search();
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -102,23 +100,44 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         String[] historyArray = history.toArray(new String[history.size()]);
+        reverseArray(historyArray);
         String item = historyArray[position];
         textView.setText(item);
-
         lpw.dismiss();
     }
 
-    @Override
+    @OnTouch(R.id.textInput)
     public boolean onTouch(View v, MotionEvent event) {
 
-        if(history.size() == 6){
+        if (history.size() == 6) {
             String overload = history.get(history.size() - 6);
             history.remove(overload);
         }
-
+        Collections.reverse(history);
         lpw.show();
-        return true;
+        return false;
 
+    }
+
+    public void search() {
+
+        String searchString = textView.getText().toString();
+        if (searchString.matches("")) {
+            Toast.makeText(MainActivity.this, "You did not enter a search value", Toast.LENGTH_SHORT).show();
+        } else {
+            addSearchInput(textView.getText().toString());
+            Intent intent = new Intent(MainActivity.this, ListActivity.class);
+            intent.putExtra("SEARCH_TERM", searchString);
+            startActivity(intent);
+        }
+    }
+
+    public void reverseArray(String[] array) {
+        for (int i = 0; i < array.length / 2; i++) {
+            String temp = array[i];
+            array[i] = array[array.length - i - 1];
+            array[array.length - i - 1] = temp;
+        }
     }
 
 }
