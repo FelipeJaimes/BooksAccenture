@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">BooksAccenture</string>
-    <string name="book_list_no_books_text">No books found</string>
+
+    <string name="search">Search...</string>
+    <string name="search_button">SEARCH</string>
+
+    <string name="no_books_found">No books found</string>
+    <string name="no_internet_connection">No internet connection</string>
+
+    <string name="id">ID: </string>
+    <string name="title">TITLE: </string>
+    <string name="subtitle">SUBTITLE: </string>
+    <string name="description">DESCRIPTION: </string>
+    <string name="isbn">ISBN: </string>
+
 </resources>

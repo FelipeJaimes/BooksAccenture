@@ -32,22 +32,22 @@ public class DetailsActivity extends AppCompatActivity {
         Book mBook = intent.getExtras().getParcelable("currentBook");
 
         titleTextView = findViewById(R.id.book_details_title);
-        titleTextView.setText(mBook.getTitle());
+        titleTextView.setText(getString(R.string.title) + "\n" + mBook.getTitle());
 
         bookImageView = findViewById(R.id.book_details_image);
         Picasso.get().load(mBook.getImage()).into(bookImageView);
 
         idTextView = findViewById(R.id.book_details_id);
-        idTextView.setText(mBook.getID().toString());
+        idTextView.setText(getString(R.string.id) + mBook.getID().toString());
 
         subTitleTextView = findViewById(R.id.book_details_subtitle);
-        subTitleTextView.setText(mBook.getSubTitle());
+        subTitleTextView.setText(getString(R.string.subtitle) + "\n" + mBook.getSubTitle());
 
         descriptionTextView = findViewById(R.id.book_details_description);
-        descriptionTextView.setText(mBook.getDescription());
+        descriptionTextView.setText(getString(R.string.description)+ "\n" + mBook.getDescription());
 
         isbnTextView = findViewById(R.id.book_details_isbn);
-        isbnTextView.setText(mBook.getIsbn());
+        isbnTextView.setText(getString(R.string.isbn) + mBook.getIsbn());
 
     }
 

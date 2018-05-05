@@ -77,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
+    protected void onPostResume() {
+        editTextSearchTerm.setText("");
+        super.onPostResume();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         savePrefs();

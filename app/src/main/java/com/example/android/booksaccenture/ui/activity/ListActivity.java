@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -51,12 +52,13 @@ public class ListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
+
         Intent intent = getIntent();
         String searchTerm = intent.getStringExtra("SEARCH_TERM");
         bookService = new BookService();
 
         if (!NetworkUtils.checkInternetConnection(this)) {
-            mEmptyStateTextView.setText("No internet connection");
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
             return;
         }
 
@@ -66,7 +68,6 @@ public class ListActivity extends AppCompatActivity {
         mBookAdapter.setOnItemClickListener(new ItemClickListener() {
             @Override
             public void onItemClick(View view, int adapterPos, Book item) {
-                //TODO
                 Intent intent = new Intent(ListActivity.this, DetailsActivity.class);
                 intent.putExtra("currentBook", item);
                 startActivity(intent);
@@ -89,7 +90,7 @@ public class ListActivity extends AppCompatActivity {
                 if (response.body().getBooks() == null) {
                     recyclerView.setVisibility(View.GONE);
                     mEmptyStateTextView.setVisibility(View.VISIBLE);
-                    mEmptyStateTextView.setText(R.string.book_list_no_books_text);
+                    mEmptyStateTextView.setText(R.string.no_books_found);
                     Log.d("ERROR: ", "empty array");
                 } else {
                     recyclerView.setVisibility(View.VISIBLE);

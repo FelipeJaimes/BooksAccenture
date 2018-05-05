@@ -1,9 +1,12 @@
 package com.example.android.booksaccenture.ui.adapter;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.booksaccenture.R;
@@ -11,6 +14,7 @@ import com.example.android.booksaccenture.model.Book;
 import com.example.android.booksaccenture.ui.listener.ItemClickListener;
 
 import java.util.List;
+import com.squareup.picasso.Picasso;
 
 import android.support.v7.widget.RecyclerView;
 
@@ -32,8 +36,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
 
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
-        holder.titleTextView.setText(mBooks.get(position).getTitle());
-        holder.idTextView.setText(mBooks.get(position).getID().toString());
+        holder.titleTextView.setText("Title: "+ mBooks.get(position).getTitle());
+        holder.idTextView.setText("ID: " + mBooks.get(position).getID().toString());
+        Picasso.get().load(Uri.parse(mBooks.get(position).getImage())).into(holder.imageImageView);
     }
 
     @Override
@@ -43,6 +48,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
 
     public class BookViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView imageImageView;
         TextView titleTextView;
         TextView idTextView;
 
@@ -53,6 +59,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         }
 
         private void initUI(View view) {
+            imageImageView = view.findViewById(R.id.book_list_item_image);
             titleTextView = view.findViewById(R.id.book_list_item_title);
             idTextView = view.findViewById(R.id.book_list_item_id);
         }
